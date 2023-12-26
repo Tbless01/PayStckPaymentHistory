@@ -139,20 +139,6 @@ public class RegisterService {
         return uniqueWallet;
     }
 
-//    private static boolean isInternetReachable() {
-//        try {
-//            URL url = new URL("https://www.google.com");
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.setConnectTimeout(5000);
-//
-//            int responseCode = connection.getResponseCode();
-//            return responseCode == HttpURLConnection.HTTP_OK;
-//        } catch (IOException e) {
-//            return false;
-//        }
-//    }
-
     private User buildUser(RegistrationRequest registrationRequest) {
         Set<Roles> userRoles = new HashSet<>();
         userRoles.add(Roles.USER);

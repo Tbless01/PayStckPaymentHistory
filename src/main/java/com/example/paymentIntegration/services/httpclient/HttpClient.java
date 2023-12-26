@@ -1,5 +1,13 @@
 package com.example.paymentIntegration.services.httpclient;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -49,7 +57,6 @@ public class HttpClient {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
-            // Set authorization header
             connection.setRequestProperty(authHeaderKey, authHeaderValue);
 
             int responseCode = connection.getResponseCode();
@@ -61,17 +68,44 @@ public class HttpClient {
                 }
                 in.close();
             } else {
-                // Handle unsuccessful HTTP response
                 response.append("GET request failed with response code: ").append(responseCode);
             }
             connection.disconnect();
         } catch (IOException e) {
-            // Handle exceptions or errors during the HTTP request
             e.printStackTrace();
             response.append("Exception occurred: ").append(e.getMessage());
         }
         return response.toString();
     }
+
+    public String createDedicatedAccount(int customerId, String createAccountApi,  String secretKey) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost request = new HttpPost(createAccountApi);
+            request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + secretKey);
+
+            String requestBody = "{\"customer\":\"" +customerId+ "\", \"preferred_bank\": \"wema-bank\"}";
+            StringEntity params = new StringEntity(requestBody);
+            request.setEntity(params);
+
+            HttpResponse response = httpClient.execute(request);
+            int statusCode = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+
+            if (entity != null) {
+                String responseBody = EntityUtils.toString(entity);
+                if (statusCode == 200) {
+                    return responseBody;
+                } else {
+                    return "Failed with status code: " + statusCode;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }
 

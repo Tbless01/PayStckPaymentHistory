@@ -22,6 +22,6 @@ public class LoginController {
     @ResponseBody
     public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
         ApiResponse response = loginService.login(loginRequest);
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

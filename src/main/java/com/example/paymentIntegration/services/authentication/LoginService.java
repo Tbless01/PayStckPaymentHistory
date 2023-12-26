@@ -13,10 +13,13 @@ import com.example.paymentIntegration.utils.GenerateApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.security.Security;
 import java.util.Optional;
 
 @Service
@@ -41,7 +44,8 @@ public class LoginService {
 //    }
 
 public ApiResponse login(LoginRequest loginRequest) throws UserLoginException {
-    authenticateUser(loginRequest);
+    Authentication authentication = authenticateUser(loginRequest);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
     UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmailAddress());
     if (userDetails == null) {
         throw new UserLoginException(GenerateApiResponse.INVALID_CREDENTIALS);
@@ -76,8 +80,8 @@ public ApiResponse login(LoginRequest loginRequest) throws UserLoginException {
                 });
 }
 
-    private void authenticateUser(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+    private Authentication authenticateUser(LoginRequest loginRequest) {
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmailAddress(), loginRequest.getPassword()));
     }
 }

@@ -9,6 +9,7 @@ public interface UserService {
 
     User save(User user);
     User findUserByEmailAddress(String emailAddress);
+    User findUserById(Long Id);
     List<UserResponse> getAllUsers();
     void deleteAll();
 }

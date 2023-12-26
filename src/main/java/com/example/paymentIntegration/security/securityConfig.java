@@ -29,7 +29,8 @@ public class securityConfig {
                 .authorizeHttpRequests((auth -> {
                     auth
                             .requestMatchers("/api/v1/auth/register","/api/v1/register/user", "/api/v1/auth/login", "/api/v1/test",
-                                   "/api/v1/payment/initiate-payment","/api/v1/payment/verify-payment/**", "/api/v1/transaction/history/**").permitAll();
+                                   "/api/v1/payment/initiate-payment","/api/v1/payment/verify-payment/**", "/api/v1/transaction/history/**",
+                                    "/api/v1/user/account","/api/v1/customer/create","/api/v1/customer/account","/api/v1/customer/**","/api/v1/customer/validate","/api/v1/customer/update/**").permitAll();
                 }))
                 .sessionManagement((session) -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -37,12 +38,5 @@ public class securityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    protected void configure(HttpSecurity http) throws Exception {
-        http.headers()
-                .addHeaderWriter(
-                        new StaticHeadersWriter("Access-Control-Allow-Origin", "address for your front-end here")
-                );
     }
 }

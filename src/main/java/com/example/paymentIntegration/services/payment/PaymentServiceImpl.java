@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-
 public class PaymentServiceImpl implements PaymentService{
 
     private final PaymentRepository paymentRepository;
