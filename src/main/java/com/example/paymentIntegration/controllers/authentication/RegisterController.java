@@ -19,7 +19,6 @@ public class RegisterController {
 
     private final RegisterService registerService;
 
-    @SneakyThrows
     @PostMapping("/user")
     @ResponseBody
     public ResponseEntity<ApiResponse> registerUser(@RequestBody RegistrationRequest registrationRequest) {

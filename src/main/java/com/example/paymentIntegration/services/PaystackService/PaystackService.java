@@ -106,6 +106,7 @@ public class PaystackService {
     private final String CREATE_CUSTOMER_URL = "https://api.paystack.co/customer";
 
     private final CloseableHttpClient httpClientValidate;
+    private final String FETCH_CUSTOMER_URL =  "https://api.paystack.co/customer/";
 
     private final HttpHeaders paystackHeadersValidate;
     private final RestTemplate restTemplate;
@@ -236,7 +237,7 @@ public class PaystackService {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(
-                "https://api.paystack.co/customer/" + customerCode,
+                FETCH_CUSTOMER_URL + customerCode,
                 HttpMethod.GET,
                 entity,
                 String.class);
