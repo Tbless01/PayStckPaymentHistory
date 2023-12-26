@@ -74,27 +74,23 @@
 package com.example.paymentIntegration.services.authentication;
 
 import com.example.paymentIntegration.data.models.Enum.Roles;
-import com.example.paymentIntegration.data.models.Token;
 import com.example.paymentIntegration.data.models.User;
 import com.example.paymentIntegration.data.models.Wallet;
 import com.example.paymentIntegration.dtos.request.RegistrationRequest;
 import com.example.paymentIntegration.exceptions.BadNetworkException;
 import com.example.paymentIntegration.exceptions.UserRegistrationException;
 import com.example.paymentIntegration.security.JwtService;
-import com.example.paymentIntegration.services.token.TokenService;
 import com.example.paymentIntegration.services.user.UserService;
 import com.example.paymentIntegration.services.wallet.WalletService;
 import com.example.paymentIntegration.utils.ApiResponse;
 import com.example.paymentIntegration.utils.GenerateApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -103,12 +99,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class RegisterService {
-
     private final UserService userService;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
+//    private final TokenService tokenService;
     private final WalletService walletService;
 
 
@@ -122,11 +117,6 @@ public class RegisterService {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmailAddress());
             String jwt = jwtService.generateToken(userDetails);
-            Token token = Token.builder()
-                    .userEmailAddress(user.getEmailAddress())
-                    .jwt(jwt)
-                    .build();
-            tokenService.saveToken(token);
             return GenerateApiResponse.createdResponse("Bearer " + jwt);
         }
     }
