@@ -1,6 +1,5 @@
 package com.example.paymentIntegration.security;
 
-import com.example.paymentIntegration.services.token.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,12 +21,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        tokenService.deleteExpiredAndRevokedTokens();
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
@@ -43,10 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            boolean isValidToken =
-                    tokenService.findTokenByJwt(jwt).map(token -> !token.isExpired() && token.isRevoked()).orElse(false);
-
-            if (jwtService.isTokenValid(jwt, userDetails) && isValidToken) {
+            if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
