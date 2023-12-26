@@ -1,59 +1,3 @@
-//package com.example.paymentIntegration.services.PaystackService;
-//
-//
-//import com.example.paymentIntegration.dtos.request.PaymentRequest;
-//import com.example.paymentIntegration.services.httpclient.HttpClient;
-//import lombok.AllArgsConstructor;
-//import org.springframework.stereotype.Service;
-//
-//import java.math.BigDecimal;
-//import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
-//
-//
-//@Service
-//@AllArgsConstructor
-//public class PaystackService {
-//    private final HttpClient httpClient;
-//    private static final String SECRET_KEY = "sk_test_81e1c3d6e6a528aa121afafc73219819328f7472";
-//    private static final String VERIFY_ENDPOINT = "https://api.paystack.co/transaction/verify/";
-//
-//    public String initializeTransaction(PaymentRequest paymentRequest) {
-//        String email = paymentRequest.getEmail();
-//        BigDecimal amount = paymentRequest.getAmount();
-//        String endpoint = "https://api.paystack.co/transaction/initialize";
-////        String secretKey = "sk_test_81e1c3d6e6a528aa121afafc73219819328f7472";
-//        String params = "{\"email\":\"" + email + "\",\"amount\":\"" + amount + "\"}";
-//
-//        String response = httpClient.sendPostRequest(endpoint, SECRET_KEY, params);
-//        extractReferenceFromResponse(response);
-//        return response;
-//    }
-//
-//    private String extractReferenceFromResponse(String response) {
-//        Pattern pattern = Pattern.compile("\"reference\":\"(.*?)\"");
-//        Matcher matcher = pattern.matcher(response);
-//        if (matcher.find() && matcher.groupCount() >= 1) {
-//            return matcher.group(1);
-//        }
-//        return null;
-//    }
-//
-//    public String verifyTransaction(String reference) {
-//        String endpoint = VERIFY_ENDPOINT + reference;
-////        return httpClient.sendGetRequest(endpoint, "Authorization", "Bearer " + SECRET_KEY);
-//        String verificationResponse = httpClient.sendGetRequest(endpoint, "Authorization", "Bearer " + SECRET_KEY);
-//        if (verificationResponse != null && verificationResponse.contains("\"status\":true")) {
-//            return "Congratulations, payment successful!";
-//        } else {
-//            return "Sorry, it failed.";
-//        }
-//    }
-//
-//}
-//
-
-
 package com.example.paymentIntegration.services.PaystackService;
 
 import com.example.paymentIntegration.data.models.Enum.TransactionType;
@@ -66,17 +10,14 @@ import com.example.paymentIntegration.dtos.request.PaymentRequest;
 import com.example.paymentIntegration.dtos.request.ValidateCustomerRequest;
 import com.example.paymentIntegration.exceptions.UserDoesNotException;
 import com.example.paymentIntegration.services.TransactionHistory.TransactionHistoryService;
-import com.example.paymentIntegration.services.createAccountRestTemp.PaystackCreateAccount;
-import com.example.paymentIntegration.services.createCustomerForVirtualAccount.PaystackCreateCustomer;
+import com.example.paymentIntegration.services.createDedicatedAccount.PaystackCreateAccount;
+import com.example.paymentIntegration.services.customerForVirtualAccount.PaystackCustomer;
 import com.example.paymentIntegration.services.httpclient.HttpClient;
 import com.example.paymentIntegration.services.user.UserService;
 import com.example.paymentIntegration.services.wallet.WalletService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -94,7 +35,7 @@ import java.util.regex.Pattern;
 public class PaystackService {
     private final UserService userService;
     private final HttpClient httpClient;
-    private final PaystackCreateCustomer paystackCreateCustomer;
+    private final PaystackCustomer paystackCreateCustomer;
     private final PaystackCreateAccount paystackCreateAccount;
     private final WalletService walletService;
     private final TransactionHistoryService transactionHistoryService;
@@ -104,11 +45,7 @@ public class PaystackService {
     private final String INITIATE_ENDPOINT =  "https://api.paystack.co/transaction/initialize";
     private final String CREATE_ACCOUNT_ENDPOINT = "https://api.paystack.co/dedicated_account";
     private final String CREATE_CUSTOMER_URL = "https://api.paystack.co/customer";
-
-    private final CloseableHttpClient httpClientValidate;
     private final String FETCH_CUSTOMER_URL =  "https://api.paystack.co/customer/";
-
-    private final HttpHeaders paystackHeadersValidate;
     private final RestTemplate restTemplate;
     private static String API_VALIDATE_URL = "https://api.paystack.co";
 
@@ -123,7 +60,6 @@ public class PaystackService {
         } else
             throw new UserDoesNotException("User does not exist");
     }
-
 
     public String verifyTransaction(String reference) {
 
@@ -160,7 +96,6 @@ public class PaystackService {
     }
     public String createDedicatedVirtualAccountIniTrans(CreateAccountRequest createAccountRequest) {
         String params = "{\"code\":\"" +createAccountRequest.getCustomer() + "\"}";
-//       String secretKey = "sk_live_dfe8b8b0b3b0088e0af45f4dfb4790f1ba278b25";
         String result = httpClient.sendPostRequest(CREATE_ACCOUNT_ENDPOINT, SECRET_KEY, params);
         if (result != null) {
             return "Response: " + result;
@@ -181,28 +116,6 @@ public class PaystackService {
     public String createAccountForCustomerWithRestTempSec(String createAccountRequest){
         return paystackCreateAccount.createDedicatedAccountHttpClient(createAccountRequest, CREATE_ACCOUNT_ENDPOINT,SECRET_KEY);
     }
-
-
-//    public void validateCustomer(String email, String bvn) throws IOException {
-//        String endpoint = apiValidateUrl + "/customer/validate";
-//
-//        // Create a JSON payload for validating a customer
-//        JSONObject payload = new JSONObject();
-//        payload.put("email", email);
-//        payload.put("bvn", bvn);
-//
-//        // Make a POST request to Paystack API
-//        HttpPost request = new HttpPost(endpoint);
-//        request.setEntity(new StringEntity(payload.toString()));
-//        request.setHeaders(paystackHeaders);
-//
-//        try (CloseableHttpResponse response = httpClient.execute(request)) {
-//            // Handle the response as needed
-//            int statusCode = response.getStatusLine().getStatusCode();
-//            String responseBody = EntityUtils.toString(response.getEntity());
-//            // Process the response, check for errors, etc.
-//        }
-//    }
 
     public String validateCustomer(ValidateCustomerRequest validateCustomerRequest) {
         String endpoint = API_VALIDATE_URL + "/customer/validate";

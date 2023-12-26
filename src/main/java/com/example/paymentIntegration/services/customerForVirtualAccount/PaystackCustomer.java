@@ -1,13 +1,8 @@
-package com.example.paymentIntegration.services.createCustomerForVirtualAccount;
+package com.example.paymentIntegration.services.customerForVirtualAccount;
 
 import com.example.paymentIntegration.dtos.request.CreateCustomerRequest;
-import com.example.paymentIntegration.services.PaystackService.PaystackService;
-import com.example.paymentIntegration.services.createAccountRestTemp.PaystackCreateAccount;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -15,12 +10,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
-public class PaystackCreateCustomer {
-    private final PaystackCreateAccount paystackCreateAccount;
-
-    private final String CREATE_ACCOUNT_ENDPOINT = "https://api.paystack.co/dedicated_account";
+public class PaystackCustomer {
     private static final String API_BASE_URL = "https://api.paystack.co";
     private static final String SECRET_KEY = "sk_test_85c71a3d93757eecc2a2c0059518a955cc5a46bb";
+
+    private final String CREATE_ACCOUNT_ENDPOINT = "https://api.paystack.co/dedicated_account";
 
     public String createCustomer(CreateCustomerRequest createCustomerRequest, String createCustomerApi, String secretKey) {
         try {
@@ -82,7 +76,6 @@ public class PaystackCreateCustomer {
                 return responseEntity.getStatusCode().toString();
             }
         } catch (HttpClientErrorException e) {
-            // Handle specific HTTP error responses
             String responseBody = e.getResponseBodyAsString();
             e.printStackTrace();
             return responseBody;
@@ -91,40 +84,4 @@ public class PaystackCreateCustomer {
             return e.getMessage();
         }
     }
-
-
-//    public String updateCustomer(String code, String phone) {
-//        String endpoint = API_BASE_URL + "/customer/" + code;
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setBearerAuth(SECRET_KEY);
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        String requestBody = String.format("{\"phone\": \"%s\"}", phone);
-//
-//        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        try {
-//            ResponseEntity<String> responseEntity = restTemplate.exchange(
-//                    endpoint,
-//                    HttpMethod.PUT,
-//                    requestEntity,
-//                    String.class
-//            );
-//
-//            if (responseEntity.getStatusCode() == HttpStatus.OK) {
-//                return responseEntity.getBody();
-//            } else {
-//                return responseEntity.getStatusCode().toString();
-//            }
-//        } catch (HttpClientErrorException e) {
-//            String responseBody = e.getResponseBodyAsString();
-//            e.printStackTrace();
-//            return responseBody;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return e.getMessage();
-//        }
-//    }
 }

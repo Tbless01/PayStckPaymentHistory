@@ -7,7 +7,6 @@ public class GenerateApiResponse {
     public static final String INVALID_CREDENTIALS = "You entered invalid credentials, please try again" ;
     public static final String BEARER ="Bearer ";
 
-
     public static ApiResponse createdResponse(Object data){
         return ApiResponse.builder()
                 .httpStatus(HttpStatus.CREATED)
@@ -26,34 +25,8 @@ public class GenerateApiResponse {
                 .build();
     }
 
-    public static ApiResponse sendClockRecordData(String clockId) {
-        return ApiResponse.builder()
-                .data(clockId)
-                .httpStatus(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .isSuccessful(true)
-                .build();
-    }
 
     public static ApiResponse BadResponse(Object data) {
-        return ApiResponse.builder()
-                .data(data)
-                .httpStatus(HttpStatus.BAD_REQUEST)
-                .statusCode(HttpStatus.BAD_REQUEST.value())
-                .isSuccessful(false)
-                .build();
-    }
-
-    public static ApiResponse okClockResponse(Object data) {
-        return ApiResponse.builder()
-                .data(data)
-                .httpStatus(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .isSuccessful(true)
-                .build();
-    }
-
-    public static ApiResponse notOkResponse(Object data) {
         return ApiResponse.builder()
                 .data(data)
                 .httpStatus(HttpStatus.BAD_REQUEST)
