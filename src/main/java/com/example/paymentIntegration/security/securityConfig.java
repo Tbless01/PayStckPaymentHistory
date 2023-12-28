@@ -30,7 +30,9 @@ public class securityConfig {
                     auth
                             .requestMatchers("/api/v1/auth/register","/api/v1/register/user", "/api/v1/auth/login", "/api/v1/test",
                                    "/api/v1/payment/initiate-payment","/api/v1/payment/verify-payment/**", "/api/v1/transaction/history/**",
-                                    "/api/v1/user/account","/api/v1/customer/create","/api/v1/customer/account","/api/v1/customer/**","/api/v1/customer/validate","/api/v1/customer/update/**").permitAll();
+                                   "/api/v1/user/account","/api/v1/customer/create","/api/v1/customer/account","/api/v1/customer/**",
+                                   "api/v1/wallet/transactions/**","api/v1/wallet/**",
+                                   "/api/v1/customer/validate","/api/v1/customer/update/**").permitAll();
                 }))
                 .sessionManagement((session) -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
